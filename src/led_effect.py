@@ -86,6 +86,7 @@ class ledFrameHandler:
         self.homing = {}
         self.homing_start_flag = {}
         self.homing_end_flag = {}
+        self.init = True
         self.printer.register_event_handler('klippy:ready', self._handle_ready)
         self.printer.register_event_handler("homing:homing_move_begin",
                                             self._handle_homing_move_begin)
@@ -101,6 +102,7 @@ class ledFrameHandler:
 
     def _handle_ready(self):
         self.shutdown = False
+        self.init = True
         self.reactor = self.printer.get_reactor()
         self.printer.register_event_handler('klippy:shutdown',
                                             self._handle_shutdown)
@@ -219,8 +221,13 @@ class ledFrameHandler:
     def _getFrames(self, eventtime):
         chainsToUpdate = set()
 
-        frames = [(effect, effect.getFrame(eventtime)) for effect in
-                  self.effects if effect.enabled]
+        if self.init:
+            frames = [(effect, effect.getFrame(eventtime)) for effect in
+                      self.effects if effect.enabled]
+            self.init = False
+        else:
+            frames = [(effect, effect.getFrame(eventtime)) for effect in
+                      self.effects]
 
         # first set all LEDs to 0, that should be updated
         for effect, (frame, update) in frames:
