@@ -126,7 +126,7 @@ class ledFrameHandler:
 
     def _handle_homing_move_begin(self, hmove):
         endstops_being_homed = [name for es, name in hmove.endstops]
-        logging.info(endstops_being_homed)
+        # logging.info(endstops_being_homed)
 
         for endstop in endstops_being_homed:
             if endstop in self.homing_start_flag:
