@@ -29,7 +29,7 @@ If you need support or want to help by testing or contributing, please contact m
 The module can be installed into a existing Klipper installation with an install script. 
 
     cd ~
-    git clone https://github.com/julianschill/klipper-led_effect.git
+    git clone https://github.com/LynxCrew/klipper-led_effect.git
     cd klipper-led_effect
     ./install-led_effect.sh
 
