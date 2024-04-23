@@ -137,7 +137,7 @@ check_folders
 stop_klipper
 if [ ! $UNINSTALL ]; then
     link_extension
-    add_updater
+    # add_updater
 else
     uninstall
 fi
