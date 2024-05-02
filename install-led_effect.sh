@@ -68,28 +68,6 @@ restart_moonraker()
     echo "[OK]"
 }
 
-# Add updater for led_effect to moonraker.conf
-add_updater()
-{
-    read -p " Do you want to install updater? (y/n): " answer
-    if [ "$answer" != "${answer#[Yy]}" ]; then
-        echo -e -n "Adding update manager to moonraker.conf... "
-    
-        update_section=$(grep -c '\[update_manager led_effect\]' ${MOONRAKER_CONFIG_DIR}/moonraker.conf || true)
-        if [ "${update_section}" -eq 0 ]; then
-            echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-            while read -r line; do
-                echo -e "${line}" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-            done < "$PWD/file_templates/moonraker_update.txt"
-            echo -e "\n" >> ${MOONRAKER_CONFIG_DIR}/moonraker.conf
-            echo "[OK]"
-            restart_moonraker
-            else
-            echo -e "[update_manager led_effect] already exists in moonraker.conf [SKIPPED]"
-        fi
-    fi
-}
-
 restart_klipper()
 {
     echo -n "Restarting Klipper... "
@@ -140,7 +118,6 @@ check_folders
 stop_klipper
 if [ ! $UNINSTALL ]; then
     link_extension
-    add_updater
 else
     uninstall
 fi
