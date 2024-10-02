@@ -418,8 +418,8 @@ class ledEffect:
                 if ledChain not in self.ledChains:
                     self.ledChains.append(ledChain)
 
-                if ledIndices == []:
-                    for i in range(ledChain.led_helper.get_led_count()):
+                if ledIndices == [] :
+                    for i in range(ledChain.led_helper.led_count):
                         self.leds.append((ledChain, int(i)))
                 else:
                     for led in ledIndices:
