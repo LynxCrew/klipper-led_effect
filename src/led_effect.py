@@ -8,6 +8,7 @@
 
 from math import cos, exp, pi
 from random import randint
+from extras.led_group import parse_chain
 
 ANALOG_SAMPLE_TIME = 0.001
 ANALOG_SAMPLE_COUNT = 5
@@ -265,34 +266,6 @@ class ledFrameHandler:
         next_eventtime = min(next_eventtime, eventtime + 0.1)
         return next_eventtime
 
-    def parse_chain(self, chain):
-        chain = chain.strip()
-        leds = []
-        parms = [parameter.strip() for parameter in chain.split()
-                 if parameter.strip()]
-        if parms:
-            chainName = parms[0].replace(':', ' ')
-            ledIndices = ''.join(parms[1:]).strip('()').split(',')
-            for led in ledIndices:
-                if led:
-                    if '-' in led:
-                        start, stop = map(int, led.split('-'))
-                        if stop == start:
-                            ledList = [start - 1]
-                        elif stop > start:
-                            ledList = list(range(start - 1, stop))
-                        else:
-                            ledList = list(reversed(range(stop - 1, start)))
-                        for i in ledList:
-                            leds.append(int(i))
-                    else:
-                        for i in led.split(','):
-                            leds.append(int(i) - 1)
-
-            return chainName, leds
-        else:
-            return None, None
-
     def cmd_STOP_LED_EFFECTS(self, gcmd):
         ledParam = gcmd.get('LEDS', "")
         stopAll = (ledParam == "")
@@ -301,7 +274,7 @@ class ledFrameHandler:
             stopEffect = stopAll
             if not stopAll:
                 try:
-                    chainName, ledIndices = self.parse_chain(ledParam)
+                    chainName, ledIndices = parse_chain(ledParam)
                     chain = self.printer.lookup_object(chainName)
                 except Exception as e:
                     raise gcmd.error("Unknown LED '%s'" % (ledParam,))
@@ -410,7 +383,7 @@ class ledEffect:
                                     self._handle_shutdown)
         #map each LED from the chains to the "pixels" in the effect frame
         for chain in self.configChains:
-            chainName, ledIndices = self.handler.parse_chain(chain)
+            chainName, ledIndices = parse_chain(chain)
             if chainName is not None:
                 ledChain = self.printer.lookup_object(chainName)
 
