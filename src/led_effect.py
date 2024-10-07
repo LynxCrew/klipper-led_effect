@@ -540,12 +540,12 @@ class ledEffect:
                 self.set_fade_time(parmFadeTime)
             if gcmd.get_int('RESTART', 0) >= 1:
                 self.reset_frame()
-            for led_chain, index in self.leds:
-                disable_template_gcode = f"SET_LED_TEMPLATE LED={led_chain.name} INDEX={index}"
-                led_chain.led_helper.cmd_SET_LED_TEMPLATE(disable_template_gcode)
             self.set_enabled(True)
 
     def _handle_shutdown(self):
+        for led_chain, index in self.leds:
+            disable_template_gcode = f"SET_LED_TEMPLATE LED={led_chain.name} INDEX={index}"
+            led_chain.led_helper.cmd_SET_LED_TEMPLATE(disable_template_gcode)
         self.set_enabled(self.runOnShutown)
 
     def adcCallback(self, read_time, read_value):
