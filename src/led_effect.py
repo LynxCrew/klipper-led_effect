@@ -356,7 +356,7 @@ class ledEffect:
         self.printer.register_event_handler('klippy:ready', self._handle_ready)
         self.gcode.register_mux_command('SET_LED_EFFECT', 'EFFECT', self.name,
                                         self.cmd_SET_LED_EFFECT,
-                                        desc=self.cmd_SET_LED_help)
+                                        desc=self.cmd_SET_LED_EFFECT_help)
 
         if self.analogPin:
             ppins = self.printer.lookup_object('pins')
@@ -370,7 +370,7 @@ class ledEffect:
             buttons = self.printer.load_object(config, "buttons")
             buttons.register_buttons(self.buttonPins, self.button_callback)
 
-    cmd_SET_LED_help = 'Starts or Stops the specified led_effect'
+    cmd_SET_LED_EFFECT_help = 'Starts or Stops the specified led_effect'
 
     def _handle_ready(self):
         self.configChains = self.configLeds.split('\n')
@@ -540,6 +540,9 @@ class ledEffect:
                 self.set_fade_time(parmFadeTime)
             if gcmd.get_int('RESTART', 0) >= 1:
                 self.reset_frame()
+            for led_chain, index in self.leds:
+                disable_template_gcode = f"SET_LED_TEMPLATE LED={led_chain.name} INDEX={index}"
+                led_chain.led_helper.cmd_SET_LED_TEMPLATE(disable_template_gcode)
             self.set_enabled(True)
 
     def _handle_shutdown(self):
